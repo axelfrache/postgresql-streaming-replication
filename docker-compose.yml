@@ -5,8 +5,11 @@ services:
     hostname: pg0
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     volumes:
       - ./scripts:/scripts
+      - ./conf/pg0/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./conf/pg0/pg_hba.conf:/etc/postgresql/pg_hba.conf
     networks:
       - pgnet
 
@@ -16,6 +19,9 @@ services:
     hostname: pg1
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    volumes:
+      - ./conf/pg1/postgresql.conf:/etc/postgresql/postgresql.conf
     networks:
       - pgnet
 
@@ -25,6 +31,9 @@ services:
     hostname: pg2
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    volumes:
+      - ./conf/pg2/postgresql.conf:/etc/postgresql/postgresql.conf
     networks:
       - pgnet
 
@@ -34,6 +43,9 @@ services:
     hostname: pg3
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    volumes:
+      - ./conf/pg3/postgresql.conf:/etc/postgresql/postgresql.conf
     networks:
       - pgnet
 

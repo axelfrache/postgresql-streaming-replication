@@ -14,7 +14,12 @@ echo "[1/4] Stopping ${OLD_PRIMARY}..."
 docker compose stop "${OLD_PRIMARY}"
 
 echo "[2/4] Promoting ${NEW_PRIMARY}..."
-docker exec "${NEW_PRIMARY}" psql -U postgres -c "SELECT pg_promote();"
+IS_RECOVERY=$(docker exec "${NEW_PRIMARY}" psql -U postgres -tAc "SELECT pg_is_in_recovery()")
+if [ "$IS_RECOVERY" = "t" ]; then
+    docker exec "${NEW_PRIMARY}" psql -U postgres -c "SELECT pg_promote();"
+else
+    echo "Notice: ${NEW_PRIMARY} is already a primary (skipping promotion)."
+fi
 sleep 2
 docker exec "${NEW_PRIMARY}" psql -U postgres -c "SELECT pg_is_in_recovery() AS still_in_recovery;"
 
@@ -32,10 +37,13 @@ END \$\$;
 "
 
 echo "[4/4] Re-cloning ${OLD_PRIMARY} as standby of ${NEW_PRIMARY}..."
+docker compose run --rm -u root "${OLD_PRIMARY}" \
+  chown -R postgres:postgres /var/lib/postgresql/data
+
 docker compose run --rm -u postgres "${OLD_PRIMARY}" \
   bash -c "rm -rf /var/lib/postgresql/data/*"
 
-docker compose run --rm -u postgres "${OLD_PRIMARY}" \
+docker compose run --rm -e PGPASSWORD=replication -u postgres "${OLD_PRIMARY}" \
   pg_basebackup \
     -h "${NEW_PRIMARY}" -U repluser \
     -D /var/lib/postgresql/data \

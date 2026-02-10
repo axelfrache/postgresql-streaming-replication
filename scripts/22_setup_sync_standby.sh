@@ -15,11 +15,14 @@ echo "[1/5] Stopping ${STANDBY}..."
 docker compose stop "${STANDBY}"
 
 echo "[2/5] Wiping data directory..."
+docker compose run --rm -u root "${STANDBY}" \
+  chown -R postgres:postgres /var/lib/postgresql/data
+
 docker compose run --rm -u postgres "${STANDBY}" \
   bash -c "rm -rf /var/lib/postgresql/data/*"
 
 echo "[3/5] Running pg_basebackup..."
-docker compose run --rm -u postgres "${STANDBY}" \
+docker compose run --rm -e PGPASSWORD=replication -u postgres "${STANDBY}" \
   pg_basebackup \
     -h "${PRIMARY}" -U repluser \
     -D /var/lib/postgresql/data \

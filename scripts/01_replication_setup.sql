@@ -13,14 +13,19 @@ END $$;
 
 DO $$
 DECLARE
-    slot_name text;
+  s text;
 BEGIN
-    FOR slot_name IN SELECT unnest(ARRAY['pg1_slot', 'pg2_slot', 'pg3_slot']) LOOP
-        IF NOT EXISTS (SELECT 1 FROM pg_replication_slots WHERE msg_slot_name = slot_name) THEN
-            PERFORM pg_create_physical_replication_slot(slot_name);
-            RAISE NOTICE 'Replication slot % created', slot_name;
-        ELSE
-            RAISE NOTICE 'Replication slot % already exists, skipping', slot_name;
-        END IF;
-    END LOOP;
+  FOREACH s IN ARRAY ARRAY['pg1_slot', 'pg2_slot', 'pg3_slot']
+  LOOP
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_replication_slots
+      WHERE slot_name = s
+    ) THEN
+      PERFORM pg_create_physical_replication_slot(s);
+      RAISE NOTICE 'Slot % created', s;
+    ELSE
+      RAISE NOTICE 'Slot % already exists', s;
+    END IF;
+  END LOOP;
 END $$;

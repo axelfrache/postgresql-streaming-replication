@@ -5,11 +5,13 @@ services:
     hostname: pg0
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+      PGDATA: /var/lib/postgresql/data
     command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     volumes:
       - ./scripts:/scripts
       - ./conf/pg0/postgresql.conf:/etc/postgresql/postgresql.conf
       - ./conf/pg0/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - pg0-data:/var/lib/postgresql/data
     networks:
       - pgnet
 
@@ -19,9 +21,13 @@ services:
     hostname: pg1
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+      PGDATA: /var/lib/postgresql/data
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     volumes:
+      - ./scripts:/scripts
       - ./conf/pg1/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./conf/pg0/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - pg1-data:/var/lib/postgresql/data
     networks:
       - pgnet
 
@@ -31,9 +37,13 @@ services:
     hostname: pg2
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+      PGDATA: /var/lib/postgresql/data
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     volumes:
+      - ./scripts:/scripts
       - ./conf/pg2/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./conf/pg0/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - pg2-data:/var/lib/postgresql/data
     networks:
       - pgnet
 
@@ -43,11 +53,22 @@ services:
     hostname: pg3
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+      PGDATA: /var/lib/postgresql/data
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     volumes:
+      - ./scripts:/scripts
       - ./conf/pg3/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./conf/pg0/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - pg3-data:/var/lib/postgresql/data
     networks:
       - pgnet
 
 networks:
   pgnet:
+
+
+volumes:
+  pg0-data:
+  pg1-data:
+  pg2-data:
+  pg3-data:

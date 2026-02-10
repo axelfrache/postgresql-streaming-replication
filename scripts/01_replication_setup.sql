@@ -1,9 +1,6 @@
--- 01_replication_setup.sql
--- Sets up replication role and slots idempotently.
-
+-- Replication role and slots setup (idempotent)
 \ir 00_check_primary.sql
 
--- Create replication role 'repluser'
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'repluser') THEN
@@ -14,7 +11,6 @@ BEGIN
     END IF;
 END $$;
 
--- Create physical replication slots for pg1, pg2, pg3 idempotently
 DO $$
 DECLARE
     slot_name text;

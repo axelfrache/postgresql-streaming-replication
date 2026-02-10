@@ -1,6 +1,4 @@
--- 00_check_primary.sql
--- Force execution on primary node only.
-
+-- Guard: ensure this runs on the primary only
 DO $$
 BEGIN
     IF pg_is_in_recovery() THEN

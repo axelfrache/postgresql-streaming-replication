@@ -1,15 +1,11 @@
--- 02_music_database.sql
--- Initializes the music database idempotently.
-
+-- Music database: schema + data (idempotent)
 \ir 00_check_primary.sql
 
--- Create database 'music' if not exists
 SELECT 'CREATE DATABASE music'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'music')\gexec
 
 \c music
 
--- Ensure we are still on primary
 DO $$
 BEGIN
     IF pg_is_in_recovery() THEN
@@ -17,7 +13,6 @@ BEGIN
     END IF;
 END $$;
 
--- Create Tables
 CREATE TABLE IF NOT EXISTS Artists (
     artistID smallint PRIMARY KEY,
     name varchar(20),
@@ -35,7 +30,6 @@ CREATE TABLE IF NOT EXISTS Albums (
     artistID smallint
 );
 
--- Insert Data (Idempotent)
 INSERT INTO Artists (artistID, name, city, country, style) VALUES
     (1, 'Bill Evans', 'New York', 'USA', 'jazz'),
     (2, 'Juliette Jade', 'Paris', 'France', 'rock'),
@@ -50,5 +44,3 @@ INSERT INTO Albums (albumID, name, format, year, online_stores, artistID) VALUES
     (4, 'You must believe in spring', 'digital vinyl', 2004, 'fnac', 1),
     (5, 'Live in Paris', 'CD', 2002, 'amazon', 4)
 ON CONFLICT (albumID) DO NOTHING;
-
-RAISE NOTICE 'Music database initialized.';

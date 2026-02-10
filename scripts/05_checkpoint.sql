@@ -1,7 +1,4 @@
--- 05_checkpoint.sql
--- Forces a checkpoint.
-
+-- Force a checkpoint
 \ir 00_check_primary.sql
 
 CHECKPOINT;
-RAISE NOTICE 'Checkpoint complete.';

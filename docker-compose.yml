@@ -1,0 +1,41 @@
+services:
+  pg0:
+    image: postgres:18
+    container_name: pg0
+    hostname: pg0
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./scripts:/scripts
+    networks:
+      - pgnet
+
+  pg1:
+    image: postgres:18
+    container_name: pg1
+    hostname: pg1
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - pgnet
+
+  pg2:
+    image: postgres:18
+    container_name: pg2
+    hostname: pg2
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - pgnet
+
+  pg3:
+    image: postgres:18
+    container_name: pg3
+    hostname: pg3
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - pgnet
+
+networks:
+  pgnet:
